@@ -6,6 +6,7 @@ function App() {
 
   return (
     <div>
+    <h1 className='title'>Search Page Application</h1>
     <SearchPage/>
     </div>
   )
