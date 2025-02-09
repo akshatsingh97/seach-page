@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { debounce } from '../utils/utils.js';
 import "./SearchPage.css";
 
@@ -8,21 +8,42 @@ const SearchPage = () => {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const fetchResults = async (searchText) => {
+    const abortControllerRef = useRef(null);
+
+    const fetchResults = useCallback(async (searchText) => {
+
+        if(abortControllerRef.current){
+            console.log("Aborting previous request");
+            abortControllerRef.current.abort();
+        }
+
+        abortControllerRef.current = new AbortController();
+        const signal = abortControllerRef.current.signal;
+
+
         setLoading(true);
         try{
-            const response = await fetch(`https://jsonplaceholder.typicode.com/comments?q=${searchText}`);
+            const response = await fetch(`https://jsonplaceholder.typicode.com/comments?q=${searchText}`, {signal});
             if (!response.ok) throw new Error("Network response was not ok");
+
             const data = await response.json();
             setResults(data.slice(0, 20));
         }catch(error){
-            console.error("Error fetching data", error);
-            setResults([]);
+            if(error.name === "AbortError"){
+                console.log("Fetch request was aborted");
+            }
+            else{
+                console.error("Error fetching data", error);
+                setResults([]);
+            }
+        }finally {
+            setLoading(false);
         }
-        setLoading(false);
-    }
 
-    const debounceSearch = useCallback(debounce(fetchResults, 300), [fetchResults]);
+        return () => abortControllerRef.current?.abort();
+    }, []);
+
+    const debounceSearch = useMemo(() => debounce(fetchResults, 600), [fetchResults]);
 
     useEffect(() => {
         if(query.length >= 3){
