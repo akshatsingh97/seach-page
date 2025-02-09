@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1739101835288" clover="3.2.0">
-  <project timestamp="1739101835288" name="All files">
-    <metrics statements="42" coveredstatements="42" conditionals="12" coveredconditionals="12" methods="14" coveredmethods="13" elements="68" coveredelements="67" complexity="0" loc="42" ncloc="42" packages="3" files="3" classes="3"/>
+<coverage generated="1739105851125" clover="3.2.0">
+  <project timestamp="1739105851125" name="All files">
+    <metrics statements="43" coveredstatements="43" conditionals="14" coveredconditionals="14" methods="15" coveredmethods="14" elements="72" coveredelements="71" complexity="0" loc="43" ncloc="43" packages="3" files="3" classes="3"/>
     <package name="src">
       <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
       <file name="App.jsx" path="/Users/akshat/Desktop/page-search/src/App.jsx">
@@ -10,9 +10,9 @@
       </file>
     </package>
     <package name="src.components">
-      <metrics statements="37" coveredstatements="37" conditionals="12" coveredconditionals="12" methods="10" coveredmethods="9"/>
+      <metrics statements="38" coveredstatements="38" conditionals="12" coveredconditionals="12" methods="10" coveredmethods="9"/>
       <file name="SearchPage.jsx" path="/Users/akshat/Desktop/page-search/src/components/SearchPage.jsx">
-        <metrics statements="37" coveredstatements="37" conditionals="12" coveredconditionals="12" methods="10" coveredmethods="9"/>
+        <metrics statements="38" coveredstatements="38" conditionals="12" coveredconditionals="12" methods="10" coveredmethods="9"/>
         <line num="6" count="1" type="stmt"/>
         <line num="7" count="50" type="stmt"/>
         <line num="8" count="50" type="stmt"/>
@@ -41,25 +41,26 @@
         <line num="49" count="24" type="cond" truecount="2" falsecount="0"/>
         <line num="50" count="11" type="stmt"/>
         <line num="53" count="13" type="stmt"/>
-        <line num="57" count="50" type="stmt"/>
-        <line num="58" count="9" type="cond" truecount="2" falsecount="0"/>
-        <line num="59" count="8" type="stmt"/>
-        <line num="63" count="50" type="stmt"/>
-        <line num="64" count="29" type="stmt"/>
-        <line num="65" count="4" type="stmt"/>
-        <line num="73" count="50" type="stmt"/>
-        <line num="79" count="12" type="stmt"/>
-        <line num="82" count="9" type="stmt"/>
+        <line num="54" count="13" type="stmt"/>
+        <line num="58" count="50" type="stmt"/>
+        <line num="59" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="8" type="stmt"/>
+        <line num="64" count="50" type="stmt"/>
+        <line num="65" count="29" type="stmt"/>
+        <line num="66" count="4" type="stmt"/>
+        <line num="74" count="50" type="stmt"/>
+        <line num="80" count="12" type="stmt"/>
+        <line num="83" count="9" type="stmt"/>
       </file>
     </package>
     <package name="src.utils">
-      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+      <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
       <file name="utils.js" path="/Users/akshat/Desktop/page-search/src/utils/utils.js">
-        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
-        <line num="2" count="1" type="stmt"/>
-        <line num="4" count="12" type="stmt"/>
-        <line num="5" count="11" type="stmt"/>
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
+        <line num="5" count="11" type="cond" truecount="2" falsecount="0"/>
         <line num="6" count="11" type="stmt"/>
+        <line num="8" count="13" type="stmt"/>
+        <line num="9" count="12" type="stmt"/>
       </file>
     </package>
   </project>

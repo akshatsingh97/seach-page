@@ -50,6 +50,7 @@ const SearchPage = () => {
             debounceSearch(query);
         }
         else{
+            debounceSearch.cancel();
             setResults([]);
         }
     }, [query]);

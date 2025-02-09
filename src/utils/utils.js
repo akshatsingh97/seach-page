@@ -1,8 +1,10 @@
 // Debounce polyfill
-export const debounce = (func, delay) => {
+export function debounce(func, delay) {
     let timer;
-    return function (...args) {
-        clearTimeout(timer);
+    function debounced(...args) {
+        if(timer) clearTimeout(timer);
         timer = setTimeout(() => func.apply(this, args), delay);
     };
+    debounced.cancel = () => clearTimeout(timer);
+    return debounced;
 };
