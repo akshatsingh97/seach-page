@@ -3,7 +3,8 @@ export function debounce(func, delay) {
     let timer;
     function debounced(...args) {
         if(timer) clearTimeout(timer);
-        timer = setTimeout(() => func.apply(this, args), delay);
+        const context = this;
+        timer = setTimeout(() => func.apply(context, args), delay);
     };
     debounced.cancel = () => clearTimeout(timer);
     return debounced;

@@ -39,9 +39,7 @@ const SearchPage = () => {
         }finally {
             setLoading(false);
         }
-
-        return () => abortControllerRef.current?.abort();
-    }, []);
+    }, [setResults, setLoading]);
 
     const debounceSearch = useMemo(() => debounce(fetchResults, 600), [fetchResults]);
 
@@ -53,8 +51,20 @@ const SearchPage = () => {
             debounceSearch.cancel();
             setResults([]);
         }
-    }, [query]);
 
+        return () => {
+            debounceSearch.cancel();
+        };
+    }, [query, debounceSearch]);
+
+
+    useEffect(() => {
+        return () => {
+            abortControllerRef.current?.abort();
+        };
+    }, []);
+
+    
     const handleSearchClick = () => {
         if (!loading) {
             fetchResults(query);
