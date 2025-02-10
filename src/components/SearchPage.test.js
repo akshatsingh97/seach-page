@@ -228,7 +228,6 @@ test("renders result items correctly when results state is updated", async () =>
   });
 
   test("renders result items with class 'result-item'", async () => {
-    // Mock API response for fetchSuggestions (suggestions dropdown)
     fetch.mockResolvedValueOnce({
         ok: true,
         json: async () => [
@@ -237,7 +236,6 @@ test("renders result items correctly when results state is updated", async () =>
         ],
     });
 
-    // Mock API response for fetchResults (search results)
     fetch.mockResolvedValueOnce({
         ok: true,
         json: async () => [
@@ -248,29 +246,23 @@ test("renders result items correctly when results state is updated", async () =>
 
     render(<SearchPage />);
 
-    // Simulate user typing in search input
     fireEvent.change(screen.getByPlaceholderText("Search..."), {
         target: { value: "John" },
     });
 
-    // Wait for suggestions to appear
     await waitFor(() => {
         expect(screen.getByText((content) => content.includes("John Doe"))).toBeInTheDocument();
     });
 
-    // Click on "John Doe" suggestion to select it
     fireEvent.click(screen.getByText((content) => content.includes("John Doe")));
 
-    // Simulate clicking the search button
     fireEvent.click(screen.getByText("Search"));
 
-    // Wait for result items to be rendered
     await waitFor(() => {
         const resultItems = screen.getAllByTestId("result-item");
         expect(resultItems.length).toBe(2);
     });
 
-    // Ensure they have the expected class
     const resultItems = screen.getAllByTestId("result-item");
     resultItems.forEach((item) => {
         expect(item).toHaveClass("result-item");
@@ -284,7 +276,6 @@ test("renders result items correctly when results state is updated", async () =>
         screen.getByText((content) => content.includes("This is Jane's comment"))
     ).toBeInTheDocument();
 
-    // Ensure correct content is displayed
     expect(screen.getByText("John Doe")).toBeInTheDocument();
     expect(screen.getByText("john@example.com")).toBeInTheDocument();
 
@@ -296,11 +287,10 @@ test("does not render result items when results are empty", async () => {
     fetch.mockResolvedValueOnce({
         ok: true,
         json: async () => [
-            { id: 99, name: "No Results" }, // Simulated suggestion
+            { id: 99, name: "No Results" },
         ],
     });
 
-    // Mock API response for fetchResults (empty results)
     fetch.mockResolvedValueOnce({
         ok: true,
         json: async () => [],
@@ -308,23 +298,18 @@ test("does not render result items when results are empty", async () => {
 
     render(<SearchPage />);
 
-    // Simulate user typing in search input
     fireEvent.change(screen.getByPlaceholderText("Search..."), {
         target: { value: "No Results" },
     });
 
-    // Wait for suggestions to appear
     await waitFor(() => {
         expect(screen.getByText("No Results")).toBeInTheDocument();
     });
 
-    // Click on "No Results" suggestion to select it
     fireEvent.click(screen.getByText("No Results"));
 
-    // Simulate clicking the search button
     fireEvent.click(screen.getByText("Search"));
 
-    // Wait for no results message
     await waitFor(() => {
         expect(screen.queryByTestId("result-item")).not.toBeInTheDocument();
     });
