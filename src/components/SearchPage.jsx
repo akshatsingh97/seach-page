@@ -5,97 +5,110 @@ import "./SearchPage.css";
 
 const SearchPage = () => {
     const [query, setQuery] = useState("");
+    const [selectedQuery, setSelectedQuery] = useState("");
     const [results, setResults] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [suggestions, setSuggestions] = useState([]);
 
     const abortControllerRef = useRef(null);
 
-    const fetchResults = useCallback(async (searchText) => {
-
-        if(abortControllerRef.current){
-            console.log("Aborting previous request");
+    const fetchSuggestions = useCallback(async (searchText) => {
+        if (abortControllerRef.current) {
             abortControllerRef.current.abort();
         }
-
         abortControllerRef.current = new AbortController();
         const signal = abortControllerRef.current.signal;
 
+        try {
+            const response = await fetch(`https://jsonplaceholder.typicode.com/comments?q=${searchText}`, { signal });
+            if (!response.ok) throw new Error("Network response was not ok");
 
-        setLoading(true);
-        try{
-            const response = await fetch(`https://jsonplaceholder.typicode.com/comments?q=${searchText}`, {signal});
+            const data = await response.json();
+            setSuggestions(data.slice(0, 20).filter(item => item.name !== selectedQuery));
+        } catch (error) {
+            if (error.name !== "AbortError") {
+                console.error("Error fetching suggestions", error);
+            }
+        }
+    }, [selectedQuery]);
+
+    const fetchResults = useCallback(async () => {
+        if (!selectedQuery) return;
+
+        try {
+            const response = await fetch(`https://jsonplaceholder.typicode.com/comments?q=${selectedQuery}`);
             if (!response.ok) throw new Error("Network response was not ok");
 
             const data = await response.json();
             setResults(data.slice(0, 20));
-        }catch(error){
-            if(error.name === "AbortError"){
-                console.log("Fetch request was aborted");
-            }
-            else{
-                console.error("Error fetching data", error);
-                setResults([]);
-            }
-        }finally {
-            setLoading(false);
-        }
-    }, [setResults, setLoading]);
-
-    const debounceSearch = useMemo(() => debounce(fetchResults, 600), [fetchResults]);
-
-    useEffect(() => {
-        if(query.length >= 3){
-            debounceSearch(query);
-        }
-        else{
-            debounceSearch.cancel();
+            setSuggestions([]);
+        } catch (error) {
+            console.error("Error fetching results", error);
             setResults([]);
         }
+    }, [selectedQuery, suggestions]);
 
-        return () => {
-            debounceSearch.cancel();
-        };
-    }, [query, debounceSearch]);
+    const debounceFetchSuggestions = useMemo(() => debounce(fetchSuggestions, 400), [fetchSuggestions, selectedQuery]);
+
+
+    useEffect(() => {
+        if (query.length >= 3 && query !== selectedQuery) {
+            debounceFetchSuggestions(query);
+            setResults([]);
+        } else {
+            debounceFetchSuggestions.cancel();
+            setSuggestions([]);
+        }
+        return () => debounceFetchSuggestions.cancel();
+    }, [query, debounceFetchSuggestions, selectedQuery]);
 
 
     useEffect(() => {
         return () => {
-            abortControllerRef.current?.abort();
+            if (abortControllerRef.current && !abortControllerRef.current.signal.aborted) {
+                abortControllerRef.current.abort();
+            }
+            debounceFetchSuggestions.cancel();
         };
     }, []);
 
-    
-    const handleSearchClick = () => {
-        if (!loading) {
-            fetchResults(query);
-        }
-    };
+    const handleSuggestionClick = (suggestion) => {
+        setQuery(suggestion.name);
+        setSelectedQuery(suggestion.name);
 
-    const resultItems = useMemo(() =>
-        results.map((item) => (
-            <li key={item.id} className="result-item">
-                <p><strong>Name:</strong> {item.name}</p>
-                <p><strong>Email:</strong> {item.email}</p>
-                <p><strong>Summary:</strong> {item.body.slice(0, 64)}...</p>
-            </li>
-        )),
-    [results]);
+        setSuggestions([]);
+    };
 
     return(
         <div className="search-container">
-        <input
-            type="text"
-            placeholder="Search..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="search-input"
-        />
-        <button className="search-button" onClick={() => handleSearchClick()} disabled={query.length < 3}>
-            Search
-        </button>
-        {loading && <p className="loading-text">Loading...</p>}
-        <ul className="results-list">{resultItems}</ul>
-    </div>
+            <input
+                type="text"
+                placeholder="Search..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="search-input"
+            />
+            {suggestions.length > 0 && (
+                <ul className="suggestions-list">
+                    {suggestions.map((item) => (
+                        <li key={item.id} onClick={() => handleSuggestionClick(item)}>
+                            {item.name}
+                        </li>
+                    ))}
+                </ul>
+            )}
+            <button className="search-button" onClick={fetchResults} disabled={!selectedQuery}>
+                Search
+            </button>
+            <ul role="list" className="results-list">
+                {results.map((item) => (
+                    <li key={item.id} className="result-item" data-testid="result-item">
+                        <p><strong>Name:</strong> {item.name}</p>
+                        <p><strong>Email:</strong> {item.email}</p>
+                        <p><strong>Summary:</strong> {item.body ? item.body.slice(0, 64) : "No summary available"}...</p>
+                    </li>
+                ))}
+            </ul>
+        </div>
     )
 
 };
